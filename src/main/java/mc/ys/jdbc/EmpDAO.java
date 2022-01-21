@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class EmpDAO {
 	public void testInsert() throws SQLException {
@@ -116,6 +117,43 @@ public class EmpDAO {
 			// 결과 처리하기
 			while (rs.next()) {
 				System.out.printf("%s %s %s %n", rs.getString(1), rs.getString(2), rs.getString(3));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			// 연결 종료하기 (가장 늦게 연결한 것부터 닫아야 함.)
+			cm.closeConnection(con, stmt, rs);
+		}
+
+	}
+	
+	public void testQuery3() {
+		String sql = "select * from emp;";
+		// 커넥션 요청
+		ConnectionManager cm = new ConnectionManager();
+		Connection con = cm.getConnection();
+		// 쿼리와 결과가 통과하는 통로 만들기
+		Statement stmt = null;
+		ResultSet rs = null;
+		//ArrayList<EmpVO>를 사용하여 레코드를 EmpVO인스턴스를 생성하여 저장하는 코드 작성하시오.
+		ArrayList<EmpVO> list = new ArrayList<EmpVO>();
+		EmpVO vo = null;
+		try {
+			stmt = con.createStatement();
+			// 쿼리를 DB로 보내기 / 쿼리 결과 받기
+			rs = stmt.executeQuery(sql);
+			// 결과 처리하기
+			while (rs.next()) {
+				System.out.printf("%s %s %s %n", rs.getString(1), rs.getString(2), rs.getString(3));
+				int empCode = rs.getInt("emp_code");
+				String empName = rs.getString("emp_name");
+				int empAge = rs.getInt("emp_age");
+				Timestamp empHiredate = rs.getTimestamp("emp_hiredate");
+				int empSalary = rs.getInt("emp_salary");
+				String deptCode = rs.getString("dept_code");
+				vo = new EmpVO(empCode, empName, empAge, empHiredate, empSalary, deptCode);
+				list.add(vo);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
